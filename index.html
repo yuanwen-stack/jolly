@@ -1,42 +1,374 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Phonics Master AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Phonics Master Complete</title>
     <style>
-        body {
-            font-family: 'Fredoka', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+        body { font-family: 'Verdana', sans-serif; background-color: #E1F5FE; text-align: center; margin: 0; padding: 10px; }
+        
+        .game-card {
+            background: white;
+            max-width: 650px;
+            margin: 0 auto;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 5px solid #0288D1;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
         }
-        @keyframes bounceIn {
-            0% { transform: scale(0); opacity: 0; }
-            60% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
+
+        h1 { color: #0277BD; margin: 5px 0; font-size: 22px; }
+        
+        /* Word Display */
+        #word-display {
+            font-size: 90px;
+            font-weight: 900;
+            color: #333;
+            margin: 15px 0;
+            line-height: 1.1;
         }
-        .animate-bounce-in {
-            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        
+        /* Highlighting specific patterns */
+        .pattern { color: #D32F2F; text-decoration: underline; }
+
+        /* Tricky Word Styling */
+        .tricky-mode #word-display { color: #E65100; }
+        .tricky-badge { display:none; background: #FF9800; color: white; padding: 5px 10px; border-radius: 10px; font-size: 14px; font-weight: bold; }
+
+        /* Guide Box */
+        .guide-box {
+            background: #FFF9C4;
+            border: 2px solid #FBC02D;
+            color: #E65100;
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .pattern-underline {
-            text-decoration-color: #ef4444;
-            text-decoration-thickness: 4px;
+
+        .audio-btn {
+            background: #FFECB3;
+            border: 2px solid #FFC107;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        /* Buttons */
+        button.action-btn {
+            font-size: 22px;
+            padding: 18px 0;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: bold;
+            width: 100%;
+            color: white;
+            box-shadow: 0 5px rgba(0,0,0,0.2);
+        }
+        button.action-btn:active { transform: scale(0.98); }
+        .btn-check { background-color: #43A047; }
+        .btn-next { background-color: #1976D2; }
+        
+        /* Menu Styling */
+        .menu-scroll { overflow-y: auto; max-height: 75vh; padding-right: 5px; }
+        .menu-btn { 
+            background-color: #00BCD4; color: white; 
+            margin: 5px 0; padding: 12px; width: 100%; 
+            border-radius: 12px; border:none; font-weight:bold; font-size: 16px; 
+            cursor: pointer; text-align: left; padding-left: 20px;
+        }
+        .menu-category { font-weight: bold; color: #01579B; margin: 15px 0 5px 0; text-align: left; }
+
+        .hidden { display: none; }
+        .example-text { color: #777; font-style: italic; font-size: 16px; margin-bottom: 5px; }
+        #reward-area { font-size: 80px; margin: 10px 0; animation: bounceIn 0.8s; }
+        @keyframes bounceIn { 0% { transform: scale(0); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
-  }
-}
-</script>
 </head>
-<body class="bg-sky-100 min-h-screen">
-    <div id="root"></div>
+<body>
+
+    <div class="game-card">
+        
+        <div id="menu-screen">
+            <h1>📚 Phonics Library</h1>
+            <div class="menu-scroll">
+                
+                <div class="menu-category">PART 1: THE 7 GROUPS</div>
+                <button class="menu-btn" onclick="startGame('g1')">Group 1: s, a, t, i, p, n</button>
+                <button class="menu-btn" onclick="startGame('g2')">Group 2: ck, e, h, r, m, d</button>
+                <button class="menu-btn" onclick="startGame('g3')">Group 3: g, o, u, l, f, b</button>
+                <button class="menu-btn" onclick="startGame('g4')">Group 4: ai, j, oa, ie, ee, or</button>
+                <button class="menu-btn" onclick="startGame('g5')">Group 5: z, w, ng, v, oo</button>
+                <button class="menu-btn" onclick="startGame('g6')">Group 6: y, x, ch, sh, th</button>
+                <button class="menu-btn" onclick="startGame('g7')">Group 7: qu, ou, oi, ue, er, ar</button>
+
+                <div class="menu-category">PART 2: ALTERNATIVES</div>
+                <button class="menu-btn" onclick="startGame('alt1')">Alt 1: ai, ue, oa, oi, ie, or</button>
+                <button class="menu-btn" onclick="startGame('alt2')">Alt 2: s, ou, j, ee, er, f</button>
+
+                <div class="menu-category">PART 3: TRICKY WORDS (Sight)</div>
+                <button class="menu-btn" onclick="startGame('trick1')" style="background-color:#FF9800;">Tricky 1: I, the, he, she...</button>
+                <button class="menu-btn" onclick="startGame('trick2')" style="background-color:#FF9800;">Tricky 2: you, your, come...</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <div style="display:flex; justify-content:space-between; color:#aaa; font-size:12px;">
+                <span id="level-title"></span>
+                <span id="progress"></span>
+            </div>
+
+            <div class="guide-box">
+                <div>
+                    <span id="guide-label" style="font-size:10px; display:block; color:#F9A825; font-weight:bold;">SAY:</span>
+                    <span id="guide-text" style="font-weight:bold;"></span>
+                </div>
+                <button class="audio-btn" onclick="playAudio(false)">🔊</button>
+            </div>
+            
+            <div id="tricky-badge" class="tricky-badge">⚠️ TRICKY WORD: Don't Decode!</div>
+
+            <div id="word-display"></div>
+            <div id="example-text" class="example-text"></div>
+            <div id="reward-area" class="hidden"></div>
+
+            <button id="check-btn" class="action-btn btn-check" onclick="checkAnswer()">Check! ✨</button>
+            
+            <div id="nav-buttons" class="hidden">
+                <button class="action-btn btn-next" onclick="nextWord()">Next ➡️</button>
+                <div style="margin-top:10px;">
+                    <span style="color:#999; font-size:14px; text-decoration:underline; cursor:pointer;" onclick="showMenu()">Back to Menu</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const gameData = {
+            // --- GROUP 1 (s a t i p n) ---
+            g1: [
+                {t:"s", g:"/s/ (Sun)", r:"☀️", ex:"Sun, Snake", audio:"Sss... S is for Sun"},
+                {t:"a", g:"/æ/ (Ant)", r:"🐜", ex:"Ant, Apple", audio:"Ah... A is for Ant"},
+                {t:"t", g:"/t/ (Tap)", r:"🚰", ex:"Tap, Tennis", audio:"Tuh... T is for Tap"},
+                {t:"i", g:"/i/ (Ink)", r:"✒️", ex:"Ink, Igloo", audio:"Ih... I is for Ink"},
+                {t:"p", g:"/p/ (Pan)", r:"🍳", ex:"Pan, Puff", audio:"Puh... P is for Pan"},
+                {t:"n", g:"/n/ (Net)", r:"🥅", ex:"Net, Neck", audio:"Nnn... N is for Net"}
+            ],
+            // --- GROUP 2 (ck e h r m d) ---
+            g2: [
+                {t:"ck", g:"/k/ (Duck)", r:"🦆", ex:"Duck, Kick", audio:"Kuh... C K says Kuh"},
+                {t:"e", g:"/e/ (Egg)", r:"🥚", ex:"Egg, Elbow", audio:"Eh... E is for Egg"},
+                {t:"h", g:"/h/ (Hat)", r:"🎩", ex:"Hat, Hop", audio:"Huh... H is for Hat"},
+                {t:"r", g:"/r/ (Run)", r:"🏃", ex:"Run, Rat", audio:"Rrr... R is for Run"},
+                {t:"m", g:"/m/ (Man)", r:"👨", ex:"Man, Map", audio:"Mmm... M is for Man"},
+                {t:"d", g:"/d/ (Dog)", r:"🐶", ex:"Dog, Dig", audio:"Duh... D is for Dog"}
+            ],
+            // --- GROUP 3 (g o u l f b) ---
+            g3: [
+                {t:"g", g:"/g/ (Goat)", r:"🐐", ex:"Goat, Gap", audio:"Guh... G is for Goat"},
+                {t:"o", g:"/o/ (On)", r:"🔛", ex:"On, Orange", audio:"Ah... O is for On"},
+                {t:"u", g:"/u/ (Up)", r:"⬆️", ex:"Up, Umbrella", audio:"Uh... U is for Up"},
+                {t:"l", g:"/l/ (Log)", r:"🪵", ex:"Log, Lollipop", audio:"Lll... L is for Log"},
+                {t:"f", g:"/f/ (Fish)", r:"🐟", ex:"Fish, Fan", audio:"Fff... F is for Fish"},
+                {t:"b", g:"/b/ (Bat)", r:"🦇", ex:"Bat, Ball", audio:"Buh... B is for Bat"}
+            ],
+            // --- GROUP 4 (ai j oa ie ee or) ---
+            g4: [
+                {t:"<span class='pattern'>ai</span>", g:"/ai/ (Rain)", r:"🌧️", ex:"Rain, Snail", audio:"Ay... A I says Ay... like Rain"},
+                {t:"j", g:"/j/ (Jelly)", r:"🍮", ex:"Jelly, Jump", audio:"Juh... J is for Jelly"},
+                {t:"<span class='pattern'>oa</span>", g:"/oa/ (Boat)", r:"⛵", ex:"Boat, Goat", audio:"Oh... O A says Oh... like Boat"},
+                {t:"<span class='pattern'>ie</span>", g:"/ie/ (Tie)", r:"👔", ex:"Tie, Pie", audio:"Eye... I E says Eye... like Tie"},
+                {t:"<span class='pattern'>ee</span>", g:"/ee/ (Tree)", r:"🌳", ex:"Tree, Bee", audio:"Ee... E E says Ee... like Tree"},
+                {t:"<span class='pattern'>or</span>", g:"/or/ (Fork)", r:"🍴", ex:"Fork, Corn", audio:"Or... O R says Or... like Fork"}
+            ],
+            // --- GROUP 5 (z w ng v oo oo) ---
+            g5: [
+                {t:"z", g:"/z/ (Zip)", r:"🤐", ex:"Zip, Zebra", audio:"Zzz... Z is for Zip"},
+                {t:"w", g:"/w/ (Wind)", r:"🌬️", ex:"Wind, Web", audio:"Wuh... W is for Wind"},
+                {t:"<span class='pattern'>ng</span>", g:"/ng/ (Ring)", r:"💍", ex:"Ring, Strong", audio:"Ng... N G says Ng... like Ring"},
+                {t:"v", g:"/v/ (Van)", r:"🚐", ex:"Van, Vest", audio:"Vvv... V is for Van"},
+                {t:"<span class='pattern'>oo</span>", g:"Short /oo/ (Book)", r:"📖", ex:"Book, Look", audio:"Uh... short O O says Uh... like Book"},
+                {t:"<span class='pattern'>oo</span>", g:"Long /oo/ (Moon)", r:"🌙", ex:"Moon, Zoo", audio:"Ooo... long O O says Ooo... like Moon"}
+            ],
+            // --- GROUP 6 (y x ch sh th th) ---
+            g6: [
+                {t:"y", g:"/y/ (Yo-yo)", r:"🪀", ex:"Yo-yo, Yes", audio:"Yuh... Y is for Yo-yo"},
+                {t:"x", g:"/ks/ (Box)", r:"📦", ex:"Box, Fox", audio:"Kss... X is for Box"},
+                {t:"<span class='pattern'>ch</span>", g:"/ch/ (Chip)", r:"🍟", ex:"Chip, Chop", audio:"Ch... C H says Ch... like Chip"},
+                {t:"<span class='pattern'>sh</span>", g:"/sh/ (Ship)", r:"🚢", ex:"Ship, Shop", audio:"Sh... S H says Sh... like Ship"},
+                {t:"<span class='pattern'>th</span>", g:"Voiced /th/ (This)", r:"👉", ex:"This, That", audio:"Th... voiced T H... like This"},
+                {t:"<span class='pattern'>th</span>", g:"Unvoiced /th/ (Thumb)", r:"👍", ex:"Thumb, Thin", audio:"Th... unvoiced T H... like Thumb"}
+            ],
+            // --- GROUP 7 (qu ou oi ue er ar) ---
+            g7: [
+                {t:"<span class='pattern'>qu</span>", g:"/kw/ (Queen)", r:"👑", ex:"Queen, Quack", audio:"Kw... Q U says Kw... like Queen"},
+                {t:"<span class='pattern'>ou</span>", g:"/ou/ (Cloud)", r:"☁️", ex:"Cloud, Out", audio:"Ow... O U says Ow... like Cloud"},
+                {t:"<span class='pattern'>oi</span>", g:"/oi/ (Oil)", r:"🛢️", ex:"Oil, Boil", audio:"Oi... O I says Oi... like Oil"},
+                {t:"<span class='pattern'>ue</span>", g:"/ue/ (Blue)", r:"🔵", ex:"Blue, Glue", audio:"Oo... U E says Oo... like Blue"},
+                {t:"<span class='pattern'>er</span>", g:"/er/ (Mixer)", r:"🥣", ex:"Mixer, Sister", audio:"Er... E R says Er... like Mixer"},
+                {t:"<span class='pattern'>ar</span>", g:"/ar/ (Car)", r:"🚗", ex:"Car, Star", audio:"Ar... A R says Ar... like Car"}
+            ],
+            
+            // --- ALTERNATIVES 1 (ai ue oa oi ie or) ---
+            alt1: [
+                {t:"r<span class='pattern'>ai</span>n", g:"/ai/ (in middle)", r:"🌧️", ex:"Main sound: /ai/", audio:"Rain"},
+                {t:"d<span class='pattern'>ay</span>", g:"/ai/ (at end)", r:"☀️", ex:"Alternative: ay", audio:"Day"},
+                {t:"bl<span class='pattern'>ue</span>", g:"/ue/ (oo sound)", r:"🔵", ex:"Main sound: /oo/", audio:"Blue"},
+                {t:"n<span class='pattern'>ew</span>", g:"/ew/ (oo sound)", r:"🆕", ex:"Alternative: ew", audio:"New"},
+                {t:"b<span class='pattern'>oa</span>t", g:"/oa/ (in middle)", r:"⛵", ex:"Main sound: /oa/", audio:"Boat"},
+                {t:"h<span class='pattern'>o</span>m<span class='pattern'>e</span>", g:"o-e (Magic E)", r:"🏠", ex:"Alternative: o-e", audio:"Home"}
+            ],
+            // --- ALTERNATIVES 2 (s ou j ee er f) ---
+            alt2: [
+                {t:"<span class='pattern'>ph</span>one", g:"/f/ sound (ph)", r:"📱", ex:"ph says /f/", audio:"Phone"},
+                {t:"gi<span class='pattern'>ant</span>", g:"Soft G (/j/)", r:"👹", ex:"Soft G says /j/", audio:"Giant"},
+                {t:"ea", g:"/ea/ like Head", r:"🤕", ex:"Alternative e sound", audio:"Head"}
+            ],
+
+            // --- TRICKY WORDS 1 ---
+            trick1: [
+                {t:"I", g:"Tricky Word!", r:"🙋‍♂️", ex:"Just say: I", audio:"The word is... I"},
+                {t:"the", g:"Tricky Word!", r:"👉", ex:"Just say: The", audio:"The word is... The"},
+                {t:"he", g:"Tricky Word!", r:"👦", ex:"Just say: He", audio:"The word is... He"},
+                {t:"she", g:"Tricky Word!", r:"👧", ex:"Just say: She", audio:"The word is... She"},
+                {t:"me", g:"Tricky Word!", r:"😀", ex:"Just say: Me", audio:"The word is... Me"},
+                {t:"we", g:"Tricky Word!", r:"👨‍👩‍👧", ex:"Just say: We", audio:"The word is... We"},
+                {t:"be", g:"Tricky Word!", r:"🐝", ex:"Just say: Be", audio:"The word is... Be"},
+                {t:"was", g:"Tricky Word!", r:"🔙", ex:"Just say: Was", audio:"The word is... Was"},
+                {t:"to", g:"Tricky Word!", r:"➡", ex:"Just say: To", audio:"The word is... To"},
+                {t:"do", g:"Tricky Word!", r:"📝", ex:"Just say: Do", audio:"The word is... Do"},
+                {t:"are", g:"Tricky Word!", r:"❓", ex:"Just say: Are", audio:"The word is... Are"},
+                {t:"all", g:"Tricky Word!", r:"👐", ex:"Just say: All", audio:"The word is... All"}
+            ],
+             // --- TRICKY WORDS 2 ---
+            trick2: [
+                {t:"you", g:"Tricky Word!", r:"🫵", ex:"Just say: You", audio:"The word is... You"},
+                {t:"your", g:"Tricky Word!", r:"🎒", ex:"Just say: Your", audio:"The word is... Your"},
+                {t:"come", g:"Tricky Word!", r:"👋", ex:"Just say: Come", audio:"The word is... Come"},
+                {t:"some", g:"Tricky Word!", r:"🍰", ex:"Just say: Some", audio:"The word is... Some"},
+                {t:"said", g:"Tricky Word!", r:"🗣️", ex:"Just say: Said", audio:"The word is... Said"},
+                {t:"here", g:"Tricky Word!", r:"👇", ex:"Just say: Here", audio:"The word is... Here"},
+                {t:"there", g:"Tricky Word!", r:"👉", ex:"Just say: There", audio:"The word is... There"},
+                {t:"they", g:"Tricky Word!", r:"👥", ex:"Just say: They", audio:"The word is... They"}
+            ]
+        };
+
+        // --- ENGINE ---
+        let currentList = [];
+        let index = 0;
+        let synthesis = window.speechSynthesis;
+        let isTrickyMode = false;
+
+        function showMenu() {
+            document.getElementById('menu-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.body.classList.remove('tricky-mode');
+            synthesis.cancel();
+        }
+
+        function startGame(levelKey) {
+            currentList = [...gameData[levelKey]]; // Copy array
+            index = 0;
+            
+            // Detect Tricky Mode for special styling/audio
+            isTrickyMode = levelKey.includes('trick');
+            
+            if(isTrickyMode) {
+                document.body.classList.add('tricky-mode');
+                document.getElementById('tricky-badge').style.display = 'block';
+                document.getElementById('level-title').innerText = "TRICKY WORDS (Memory)";
+                document.getElementById('guide-label').innerText = "MEMORIZE:";
+            } else {
+                document.body.classList.remove('tricky-mode');
+                document.getElementById('tricky-badge').style.display = 'none';
+                document.getElementById('level-title').innerText = "PHONICS (Decoding)";
+                document.getElementById('guide-label').innerText = "SAY:";
+            }
+
+            document.getElementById('menu-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            loadCard();
+        }
+
+        function loadCard() {
+            const item = currentList[index];
+            const displayEl = document.getElementById('word-display');
+            
+            displayEl.innerHTML = item.t;
+            
+            // Adjust font size for longer words
+            if (displayEl.innerText.length > 5) { displayEl.style.fontSize = "65px"; }
+            else { displayEl.style.fontSize = "90px"; }
+
+            document.getElementById('guide-text').innerText = item.g;
+            document.getElementById('example-text').innerText = item.ex; 
+            document.getElementById('progress').innerText = `${index + 1} / ${currentList.length}`;
+
+            document.getElementById('reward-area').classList.add('hidden');
+            document.getElementById('reward-area').innerText = item.r;
+            document.getElementById('check-btn').classList.remove('hidden');
+            document.getElementById('nav-buttons').classList.add('hidden');
+        }
+
+        function playAudio(isRepeater) {
+            synthesis.cancel();
+            const item = currentList[index];
+            const u = new SpeechSynthesisUtterance(item.audio);
+            
+            u.rate = 0.9;
+            u.pitch = 1.1;
+
+            if(isRepeater) {
+                // Play 3 times
+                let count = 0;
+                function speakLoop() {
+                    if(count < 3) {
+                        synthesis.speak(u);
+                        let u2 = new SpeechSynthesisUtterance(item.audio);
+                        u2.rate = u.rate; u2.pitch = u.pitch;
+                        u2.onend = function() { setTimeout(speakLoop, 800); };
+                        u = u2; 
+                        count++;
+                    }
+                }
+                speakLoop();
+            } else {
+                synthesis.speak(u);
+            }
+        }
+
+        function checkAnswer() {
+            document.getElementById('reward-area').classList.remove('hidden');
+            document.getElementById('check-btn').classList.add('hidden');
+            document.getElementById('nav-buttons').classList.remove('hidden');
+            playAudio(true);
+        }
+
+        function nextWord() {
+            synthesis.cancel();
+            index++;
+            if (index >= currentList.length) {
+                alert("🎉 LEVEL COMPLETE! You are a master!");
+                showMenu();
+            } else {
+                loadCard();
+            }
+        }
+    </script>
 </body>
 </html>
